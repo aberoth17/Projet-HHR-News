@@ -10,7 +10,6 @@ const News = () => {
     let [apiUrl,updateApiUrl] = useState(`https://newsapi.org/v2/top-headlines?country=fr&apiKey=ddf3a226630e4c479569ee6db2528bc2`) ;
     let [listeArticles,updateListeArticles] = useState([]) ;
     let [,updateError] = useState('') ;
-    let [,upadateNbrArticles] = useState(0) ;
     let [nbrPages,updateNbrPages] = useState(0) ;
     let [pageActive,updatePageActive] = useState(1) ;
     let [source,updateSource] = useState("") ;
@@ -21,11 +20,9 @@ const News = () => {
 
     useEffect(
         () => fetch(apiUrl).then( x => x.json() ).then( data => {
-            console.log(data.articles) ;
             let t = data.articles.filter(a => filtrerSource(a.source.name,source)) ;
             updateListeArticles(t) ;
-            upadateNbrArticles(listeArticles.length) ;
-            updateNbrPages(Math.ceil(listeArticles.length/4)) ;
+            updateNbrPages(Math.ceil(t.length/4)) ;
             updateSource(data.source.name) ;
         } ).catch( e => updateError(e) )
         ,[apiUrl,source]
@@ -34,15 +31,7 @@ const News = () => {
     return (
         <React.Fragment>
             <Categories updateApiUrl={updateApiUrl} />
-            <Tri 
-                source={source} 
-                updateSource={updateSource} 
-                listeArticles={listeArticles} 
-                updateListeArticles={updateListeArticles}
-                upadateNbrArticles={upadateNbrArticles}
-                updateNbrPages={updateNbrPages}
-                updatePageActive={updatePageActive}
-            />
+            <Tri source={source} updateSource={updateSource} />
             <section>
                 {listeArticles.slice((pageActive-1)*4,pageActive*4).map(
                     ( article , i ) => {

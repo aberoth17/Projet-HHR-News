@@ -2,8 +2,7 @@
 const Tri = ({ source, updateSource }) => {
 
     const changeSource = (e) => {
-        updateSource(e.target.value) ;
-        
+        updateSource(e.target.value)
     }
 
     return (
