@@ -13,10 +13,24 @@ const News = () => {
     let [nbrPages,updateNbrPages] = useState(0) ;
     let [pageActive,updatePageActive] = useState(1) ;
     let [source,updateSource] = useState("") ;
+    let [listeCategorie,updateListeCategorie] = useState([]) ;
 
     const filtrerSource = (str,f) => {
         return str.toLowerCase().includes(f.toLowerCase())
     }
+
+    useEffect(
+        () => fetch('https://newsapi.org/v2/sources?apiKey=ddf3a226630e4c479569ee6db2528bc2').then(x => x.json()).then(
+            data => {
+                updateListeCategorie(
+                    data.sources.reduce( 
+                        (t,s) => t.includes(s.category) ? t : [...t,s.category] , []
+                    )
+                )
+            }
+        ).catch( e => updateError(e) )
+        , []
+    )
 
     useEffect(
         () => fetch(apiUrl).then( x => x.json() ).then( data => {
@@ -30,7 +44,7 @@ const News = () => {
 
     return (
         <React.Fragment>
-            <Categories updateApiUrl={updateApiUrl} />
+            <Categories updateApiUrl={updateApiUrl} listeCategorie={listeCategorie} />
             <Tri source={source} updateSource={updateSource} />
             <section>
                 {listeArticles.slice((pageActive-1)*4,pageActive*4).map(
